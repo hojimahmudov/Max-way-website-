@@ -39,10 +39,4 @@ class Basket(models.Model):
         return "%s - %s" % (self.id, self.product)
 
 
-class Locations(models.Model):
-    location = models.CharField(max_length=350, null=False, blank=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    location_date = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.location

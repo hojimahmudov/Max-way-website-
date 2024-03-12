@@ -39,3 +39,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_staff(self):
         """Is the user a member of staff?"""
         return self.is_superuser
+
+
+class Locations(models.Model):
+    location = models.CharField(max_length=350, null=False, blank=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.location
