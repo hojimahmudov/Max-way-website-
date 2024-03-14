@@ -5,7 +5,7 @@ from user.models import User
 # Create your models here.
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, null=False, blank=False, unique=True, editable=False)
+    name = models.CharField(max_length=50, null=False, blank=False, unique=True)
 
     def __str__(self):
         return self.name

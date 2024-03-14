@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 {% load static %}
 <html lang="en">
 <head>
@@ -79,8 +80,9 @@
     <div class="main__menu">
         <ul>
             <li class="list"><a href="#">Menyu </a></li>
-            <li class="list"><a href="#">Bolalar uchun</a></li>
             <li class="list"><a href="#">Filiallar</a></li>
+            <li class="list"><a href="{% url 'login' %}">Login</a></li>
+            <li class="list"><a href="{% url 'register' %}">Register</a></li>
             <li class="list"><a href="tel:998712005400">(+99871) 200-54-00</a></li>
             <div class="net__icon"><a href="#">
                 <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -167,8 +169,12 @@
             <div class="menu__ul">
                 <ul>
                     <li class="list"><a href="index.html">Menyu </a></li>
-                    <li class="list"><a href="index.html">Bolalar uchun</a></li>
+                    <li class="list"><a href="index.html">Bolalar uchun </a></li>
                     <li class="list"><a href="index.html">Filiallar</a></li>
+                    {% if request.user.is_anonymous %}
+                    <li class="list"><a href="{% url 'login' %}">Login</a></li>
+                    <li class="list"><a href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
                 </ul>
                 <div class="phone--shop">
                     <div class="phone">
@@ -286,19 +292,21 @@
     </div>
     <div class="buttons">
         <button class="clear"><a href="index.html"> Очистить</a></button>
-        <button class="order"><a href="order.html"> Заказать</a></button>
+        {% if request.user.is_anonymous %}
+        <button class="order"><a href="{% url 'login' %}"> Заказать</a></button>
+        {% else %}
+        <button class="order"><a href="{% url 'order' %}"> Заказать</a></button>
+        {% endif %}
     </div>
 </div>
 <div class="content">
     <div class="container">
         <div class="filter">
             <button class="active" data-id="all">Barchasi</button>
-            <button data-id="pitsa">Pitsa</button>
-            <button data-id="burger">Burger</button>
-            <button data-id="kombo">Kombo</button>
-            <button data-id="salat">Salat</button>
-            <button data-id="sweets">Shirinliklar</button>
-            <button data-id="drinks">Ichimliklar</button>
+            {% for category in categorys%}
+            <button data-id="{{category.name}}">{{category.name}}</button>
+            {% endfor %}
+
             <button class="filt">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -319,325 +327,38 @@
             </button>
         </div>
         <div class="slide">
-            <div class="big__title pitsa">Pitsa</div>
-            <div class="row pitsa">
+            {% for category in categorys %}
+            <div class="big__title {{category.name}}">{{category.name}}</div>
+            <div class="row {{category.name}}">
+                {% for product in category.product_set.all %}
                 <div class="col-6 col-md-12 col-xs-12">
                     <div class="item pizza">
                         <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/pitza1.png" alt=""/>
-                                <div class="img__hot"><img class="hot" src="assets/img/hot.svg" alt=""/></div>
+                            <div class="box__img"><img class="img" src="/{{product.image}}" alt=""/>
+                                <div class="img__hot"><img class="hot" src="{% static 'img/hot.svg' %}" alt=""/></div>
                             </div>
                             <div class="box__content">
-                                <div class="box__title">Gavaya<img src="assets/img/chesse.svg" alt=""/></div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
+                                <div class="box__title">{{product.name}}<img src="{% static 'img/chesse.svg' %}"
+                                                                             alt=""/></div>
+                                <div class="box__text">{{product.discription}}</div>
                                 <div class="cost__btn">
-                                    <div class="box__cost">45,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
+                                    <div class="box__cost">{{product.price}} UZS</div>
+                                    <button class="box__btn"><img src="{% static 'img/plus.png' %}" alt=""/></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item pizza">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/pitza2.png" alt=""/>
-                                <div class="img__hot"><img class="hot" src="assets/img/hot.svg" alt=""/></div>
-                            </div>
-                            <div class="box__content">
-                                <div class="box__title">Mexica<img src="assets/img/pepper.svg" alt=""/></div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">53,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item pizza">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/pitza3.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Hot achchiko<img src="assets/img/sheet.svg" alt=""/></div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">64,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item pizza">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/pitza4.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Mexica</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">45,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item pizza">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/pitza3.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Apocalipo<img src="assets/img/pepper.svg" alt=""/></div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">64,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item pizza">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/pitza4.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Sosiskacho<img src="assets/img/sheet.svg" alt=""/></div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">45,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item pizza">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/pitza2.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Mexica</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">53,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
+
             </div>
-            <div class="slide__btn pitsa" data-id="pitsa">
-                <button>Ko‘proq ko‘rish</button>
-            </div>
-            <div class="big__title burger">Burger</div>
-            <div class="row burger">
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item burger">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/burger.png" alt=""/>
-                                <div class="img__hot"><img class="hot" src="assets/img/hot.svg" alt=""/></div>
-                            </div>
-                            <div class="box__content">
-                                <div class="box__title">Cheeseburger<img src="assets/img/chesse.svg" alt=""/></div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">23,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item burger">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/burger.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Chili burger<img src="assets/img/pepper.svg" alt=""/></div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">23,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item burger">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/burger.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Hamburger</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">23,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item burger">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/burger.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Double Burger</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">23,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="slide__btn burger" data-id="burger">
-                <button>Ko‘proq ko‘rish</button>
-            </div>
-            <div class="big__title kombo">Kombo</div>
-            <div class="row kombo">
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/kombo1.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Kombo-1</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">25,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/kombo2.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Kombo-2</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">23,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/kombo1.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Kombo-3</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">30,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="slide__btn kombo" data-id="kombo">
-                <button>Ko‘proq ko‘rish</button>
-            </div>
-            <div class="big__title drinks">Ichimliklar</div>
-            <div class="row drinks">
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/sprite.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Sprite 1L</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">6,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/cola.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Coca cola 1,5L</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">9,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-12 col-xs-12">
-                    <div class="item">
-                        <div class="box">
-                            <div class="box__img"><img class="img" src="assets/img/fanta.png" alt=""/></div>
-                            <div class="box__content">
-                                <div class="box__title">Fanta 1L</div>
-                                <div class="box__text">Горячая закуска с митболами из говядины, томатами, моцареллой и
-                                    соусом чипотле
-                                </div>
-                                <div class="cost__btn">
-                                    <div class="box__cost">6,000 UZS</div>
-                                    <button class="box__btn"><img src="assets/img/plus.png" alt=""/></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="slide__btn drinks" data-id="drinks">
-                <button>Ko‘proq ko‘rish</button>
-            </div>
+            {% endfor %}
+
+            <!-- <div class="slide__btn {{i.category}}" data-id="{{i.category}}">
+              <button>Ko‘proq ko‘rish</button>
+            </div> -->
+
+
         </div>
     </div>
 </div>
@@ -804,7 +525,7 @@
             </div>
         </div>
     </div>
-    <div class="pattern__img"><img class="phone" src="assets/img/big__phone.png" alt=""></div>
+    <div class="pattern__img"><img class="phone" src="{% static 'img/big__phone.png' %}" alt=""></div>
 </div>
 <footer class="footer">
     <div class="container">
